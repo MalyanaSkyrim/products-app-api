@@ -1,48 +1,27 @@
-const faker = require('faker');
+const faker = require("faker");
 
+const initFakeData = () => {
+  const commerce = faker.commerce;
+  const products = [];
+  for (i = 0; i < 100; i++) {
+    products.push({
+      id: faker.random.uuid(),
+      productName: commerce.productName(),
+      price: commerce.price(),
+      descp: commerce.productAdjective(),
+      img: faker.image.business()
+    });
+  }
+  return products;
+};
 
+exports.getAllProducts = (req, res, next) => {
+  const startIndex = req.params.page - 1;
+  const endIndex = startIndex + 9;
+  const products = initFakeData();
 
-exports.getAllProducts = (req,res,next) => {
-    const commerce = faker.commerce;
-    
-    const products = [
-        {
-        id: faker.random.uuid(),
-        productName:commerce.productName(),
-        price:commerce.price(),
-        descp:commerce.productAdjective(),
-        img:faker.image.business()
-    },
-        {
-        id: faker.random.uuid(),
-        productName:commerce.productName(),
-        price:commerce.price(),
-        descp:commerce.productAdjective(),
-        img:faker.image.business()
-    },
-        {
-        id: faker.random.uuid(),
-        productName:commerce.productName(),
-        price:commerce.price(),
-        descp:commerce.productAdjective(),
-        img:faker.image.business()
-    },
-        {
-        id: faker.random.uuid(),
-        productName:commerce.productName(),
-        price:commerce.price(),
-        descp:commerce.productAdjective(),
-        img:faker.image.business()
-    },
-        {
-        id: faker.random.uuid(),
-        productName:commerce.productName(),
-        price:commerce.price(),
-        descp:commerce.productAdjective(),
-        img:faker.image.business()
-    }
-]
+  const productsByPage = products.slice(startIndex, endIndex);
+  const numberOfPages = Math.ceil(products.length / 9);
 
-    return res.json({products});
-
-} 
+  return res.json({ products: productsByPage, numberOfPages });
+};
